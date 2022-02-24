@@ -3,16 +3,20 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
 
+# class PublishedManager(models.Manager):
+#     def get_queryset(self):
+#         return super(PublishedManager,
+#                      self).get_queryset()\
+#                          .filter(status='published')
+
 class PublishedManager(models.Manager):
     def get_queryset(self):
-        return super(PublishedManager,
-                     self).get_queryset()\
-                         .filter(status='published')
+        return super().get_queryset().filter(status='published')
 
 class Post(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Draft'),
-        ('published', 'Published')
+        ('published', 'Published'),
     )
     
     title = models.CharField(max_length=250)
@@ -29,16 +33,16 @@ class Post(models.Model):
                               choices=STATUS_CHOICES,
                               default='draft')
     objects = models.Manager()  # the default model manager
-    published = PublishedManager()  # the custom model manager
+    objects_published = PublishedManager()  # the custom model manager
     
-    def get_absolute_user(self):
+    class Meta:
+        ordering = ('-publish',)
+    
+    def get_absolute_url(self):
         return reverse('blog:post_detail',
                        args=[self.publish.year,
                              self.publish.month,
                              self.publish.day, self.slug])
-    
-    class Meta:
-        ordering = ('-publish',)
         
     def __str__(self):
         return self.title
