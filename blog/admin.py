@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post
+from .models import Post, Comment
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
@@ -11,4 +11,8 @@ class PostAdmin(admin.ModelAdmin):
     date_hierarchy = 'publish'
     ordering = ['status', 'publish']
 
-# Register your models here.
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['name', 'email', 'post', 'created', 'active'] # these are the fields that will the display in the Admin pages
+    list_filter = ['active', 'created', 'updated'] # these are the fields that can be used to filter the comments in the Admin pages
+    search_fields = ['name', 'email', 'body'] # these are the fields that you can search through in the Admin pages
